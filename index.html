@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <title>Document</title>
+</head>
+<body>
+<button>
+  <label for="upload">上传</label>
+</button>
+<input id="upload" hidden type="file" onchange="excelToJson(event)">
+<button onclick="jsonToExcel()">下载excel</button>
+<script>
+  function excelToJson (e) {
+    var reader = new FileReader();
+    var file = e.target.files[0];
+
+    reader.onload = function(loadEvent) {
+      var data = new Uint8Array(loadEvent.target.result);
+      var workbook = XLSX.read(data, {type: 'array'});
+      var json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
+
+      console.log(json)
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
+  function jsonToExcel () {
+    var filename = "write.xlsx";
+    var ws_name = "SheetJS";
+    var json = [
+      { name: 'a', link: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },
+      { name: 'b', link: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' }
+    ];
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.json_to_sheet(json);
+    XLSX.utils.book_append_sheet(wb, ws, ws_name);
+    XLSX.writeFile(wb, filename);
+  }
+</script>
+</body>
+</html>
