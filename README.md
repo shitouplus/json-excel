@@ -42,6 +42,14 @@ function jsonToExcel () {
     ];
     var wb = XLSX.utils.book_new();
     var ws = XLSX.utils.json_to_sheet(json);
+    const colWidth = []
+
+    json.forEach(data => {
+      Object.entries(data).forEach(([key, value], index) => {
+        colWidth[index] = Math.max(key.length, String(value).length, colWidth[index] || 0)
+      })
+    })
+    ws['!cols'] = colWidth.flatMap(item => ({ wch: item }))
     XLSX.utils.book_append_sheet(wb, ws, ws_name);
     XLSX.writeFile(wb, filename);
   }
